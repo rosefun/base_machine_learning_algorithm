@@ -40,13 +40,13 @@ class TwoLayerNeuralNetwork():
             l2 = np.dot(l1, self.w2) + self.b2 
             loss = self.mse(y, l2)
             # w2 偏导
-            w2_delta = np.dot(l1.T,2*(l2 - y))
+            w2_delta = np.dot(l1.T,2*(l2 - y))/len(y)
             # w1 偏导
-            w1_delta = np.dot(X.T, 2*np.dot(l2 - y, self.w2.T)*l1*(1 - l1))
+            w1_delta = np.dot(X.T, 2*np.dot(l2 - y, self.w2.T)*l1*(1 - l1))/len(y)
             # b2 偏导
-            b2_delta = np.mean(2*(l2 - y))
+            b2_delta = np.mean(2*(l2 - y)/len(y))
             # b1 偏导
-            b1_delta = np.mean(np.dot(2*(l2 - y), self.w2.T),axis=0)
+            b1_delta = np.mean(np.dot(2*(l2 - y)/len(y), self.w2.T),axis=0)
             self.w2 = self.w2 - self.lr*w2_delta
             self.w1 = self.w1 - self.lr*w1_delta
             self.b2 = self.b2 - self.lr*b2_delta
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     y_train = Y[:int(len(X)*0.8),:]
     y_test = Y[int(len(X)*0.8):,:]
 
-    model = TwoLayerNeuralNetwork(input_dim = 3,hidden_dim = 10,epoch=400)
+    model = TwoLayerNeuralNetwork(input_dim = 3,hidden_dim = 10,lr=0.001,epoch=800)
     losses = model.fit(X_train, y_train)
     print("train mse:{:.4f}".format(model.score(X_train,y_train)))
     print("test mse:{:.4f}".format(model.score(X_test,y_test)))
